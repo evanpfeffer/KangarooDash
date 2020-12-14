@@ -111,15 +111,25 @@ function update(){
       return (xd * xd + yd * yd <= wt * wt);
   }
 
+  function end(){
+      window.cancelAnimationFrame();
+
+  }
   var value = doCollide(x_new, y_new, 25, 600, 400, 25 );
 
   if (value === true){
     ctx.drawImage(game_over, 0, 0, 900, 500);
+    ctx.end();
+  }
 
 
+  if (x_new > 899){
+    ctx.drawImage(winner, 0, 0, 900, 500);
     window.cancelAnimationFrame();
+    ctx.end();
 
   }
+
 
 
 
