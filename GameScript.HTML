@@ -24,28 +24,51 @@ game_over.src = "GameOver.png";
 var winner = new Image();
 winner.src = "Winner.png";
 
-
-
-
+var game_on = true;
+var rock_x = 800;
+var kangroo_x = 50;
+var score_value = 0;
+var kangroo_y = 50;
+var old_rock = false;
+var isJumping = false;
+var speed = 10;
 var canvas = document.getElementById("ctx");
 var ctx = canvas.getContext("2d");
-canvas.focus();
-canvas.addEventListener("keydown", movePlayer);
-
-var x_new = 50;
-var y_new = 50;
-
 var keys = {
     up: false,
     right: false,
     left: false
 };
 
-var isJumping = false;
-var speed = 10;
+
+canvas.focus();
+canvas.addEventListener("keydown", movePlayer);
 
 
 
+function move_rock(){
+  if(rock_x >= 10){
+    rock_x -= 5;
+  }
+  if (rock_x < 10) {
+    rock_x += 900;
+    old_rock = false;
+  }
+}
+
+function add_score(){
+  if(kangroo_x > rock_x & old_rock === false){
+    score_value += 5;
+    old_rock = true;
+  }
+}
+
+function score_board(){
+  ctx.beginPath();
+  ctx.fillText("Score :" +score_value, 70, 70);
+  ctx.font = "20px Georgia";
+  ctx.fillStyle = "black";
+}
 
 
 function movePlayer(event) {
@@ -82,22 +105,35 @@ function keyUp(event){
       keys["left"] = false;
       break;
     }
+
+
 }
-ctx.drawImage(rock, 50, 50, 50,50);
 
 function update(){
-  window.requestAnimationFrame(update);
+  //Determining the if the kangroo collides with the object
+  var value = doCollide(kangroo_x, kangroo_y, 25, rock_x, 400, 25 );
+
+  //Series of statements to determine if the game should continue or end
+  if (value === true){
+    ctx.drawImage(game_over, 0, 0, 900, 500);
+    window.cancelAnimationFrame();
+  }
+  else if (kangroo_x > 899){
+    ctx.drawImage(winner, 0, 0, 900, 500);
+    window.cancelAnimationFrame();
+  }
+  else {
+    window.requestAnimationFrame(update);
+  }
+
+
+  move_rock();
+  add_score();
+  //Clears all past images from the canvas
   ctx.clearRect(0,0,900,500);
-  ctx.drawImage(image,x_new, y_new, 100, 100);
-  ctx.drawImage(rock,600, 400, 100, 100);
-
-
-
-  //Add more than on image--add rocks
-  //Get the background to move
-
-
-  //ctx.fillRect(x_new,y_new,50,50);
+  score_board();
+  ctx.drawImage(image,kangroo_x, kangroo_y, 100, 100);
+  ctx.drawImage(rock, rock_x, 400, 100, 100);
 
   ctx.beginPath();
   ctx.rect(0,490,900,10);
@@ -111,50 +147,28 @@ function update(){
       return (xd * xd + yd * yd <= wt * wt);
   }
 
-  function end(){
-      window.cancelAnimationFrame();
-
-  }
-  var value = doCollide(x_new, y_new, 25, 600, 400, 25 );
-
-  if (value === true){
-    ctx.drawImage(game_over, 0, 0, 900, 500);
-    ctx.end();
-  }
-
-
-  if (x_new > 899){
-    ctx.drawImage(winner, 0, 0, 900, 500);
-    window.cancelAnimationFrame();
-    ctx.end();
-
-  }
-
-
-
 
   if(keys["up"] && !keys["right"] && !keys["left"]){
-    y_new-=speed;
+    kangroo_y-=speed;
   } else if(keys["right"] && !keys["up"]){
-    x_new+=speed;
+    kangroo_x+=speed;
   } else if(keys["left"] && !keys["up"]){
-    x_new-=speed;
+    kangroo_x-=speed;
   } else if(keys["up"] && keys["right"]){
-    y_new-=speed;
-    x_new+=speed;
+    kangroo_y-=speed;
+    kangroo_x+=speed;
   } else if(keys["up"] && keys["left"]){
-    y_new-=speed;
-    x_new-=speed;
+    kangroo_y-=speed;
+    kangroo_x-=speed;
   }
-  if(y_new < 400 && !isJumping){
-    y_new+=speed;
+  if(kangroo_y < 400 && !isJumping){
+    kangroo_y+=speed;
   }
-
-
-
 }
 
 window.requestAnimationFrame(update);
+
+
 
 </script>
 
