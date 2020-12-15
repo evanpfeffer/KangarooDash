@@ -1,9 +1,13 @@
 <html>
 <body>
 <style>
+
 canvas{
   background: url('Dunes.jpg') no-repeat;
   background-size: cover;
+  .element {
+             transform: rotate(90deg);
+           }
 }
 
 </style>
@@ -12,8 +16,20 @@ canvas{
 
 <script>
 
+// add option to start game
+// force character down after certain hieght
+// add rock rotation
+// change up bar to space
+// add movement sprites
+
 var image = document.createElement("img");
 image.src = "KangarooSprite.png";
+
+var explosion = new Image();
+explosion.src = "ExplosionSprite.png";
+
+var plane = new Image();
+plane.src = "JapaneseFighter.png";
 
 var rock = new Image();
 rock.src = "RockSprite.png";
@@ -25,7 +41,12 @@ var winner = new Image();
 winner.src = "Winner.png";
 
 var game_on = true;
+var explosion_exists = false;
+var plane_x = 800;
+var plane_y = 50;
 var rock_x = 800;
+var rock_y = 400;
+var expo_counter = 0;
 var kangroo_x = 50;
 var score_value = 0;
 var kangroo_y = 50;
@@ -45,7 +66,6 @@ canvas.focus();
 canvas.addEventListener("keydown", movePlayer);
 
 
-
 function move_rock(){
   if(rock_x >= 10){
     rock_x -= 5;
@@ -56,6 +76,21 @@ function move_rock(){
   }
 }
 
+function move_plane(){
+  if(plane_y < 370){
+    plane_y += 5;
+    plane_x -= 10;
+  }
+}
+
+//Function does not work
+function rotate_rock(){
+  if(rock_y <= 400){
+    rock_y += 10;
+  }
+}
+
+
 function add_score(){
   if(kangroo_x > rock_x & old_rock === false){
     score_value += 5;
@@ -63,11 +98,12 @@ function add_score(){
   }
 }
 
+
 function score_board(){
   ctx.beginPath();
-  ctx.fillText("Score :" +score_value, 70, 70);
   ctx.font = "20px Georgia";
   ctx.fillStyle = "black";
+  ctx.fillText("Score : " +score_value, 70, 70);
 }
 
 
@@ -89,6 +125,7 @@ function movePlayer(event) {
     }
 }
 
+
 function keyUp(event){
   switch(event.keyCode){
     //Up key up:
@@ -105,9 +142,8 @@ function keyUp(event){
       keys["left"] = false;
       break;
     }
-
-
 }
+
 
 function update(){
   //Determining the if the kangroo collides with the object
@@ -126,14 +162,25 @@ function update(){
     window.requestAnimationFrame(update);
   }
 
-
+  rotate_rock();
   move_rock();
+
   add_score();
   //Clears all past images from the canvas
   ctx.clearRect(0,0,900,500);
   score_board();
+
+
+
+  if(plane_y < 370){
+    move_plane();
+    ctx.drawImage(plane, plane_x, plane_y, 200, 200);
+  }else if(plane_y >= 370){
+    ctx.drawImage(explosion, plane_x, plane_y, 200, 200);
+  }
   ctx.drawImage(image,kangroo_x, kangroo_y, 100, 100);
   ctx.drawImage(rock, rock_x, 400, 100, 100);
+
 
   ctx.beginPath();
   ctx.rect(0,490,900,10);
@@ -149,16 +196,25 @@ function update(){
 
 
   if(keys["up"] && !keys["right"] && !keys["left"]){
-    kangroo_y-=speed;
+    if(kangroo_y > 200) {
+      kangroo_y-=speed;
+    }
   } else if(keys["right"] && !keys["up"]){
+    if(kangroo_y > 200) {
+      kangroo_y-=speed;
+    }
     kangroo_x+=speed;
   } else if(keys["left"] && !keys["up"]){
     kangroo_x-=speed;
   } else if(keys["up"] && keys["right"]){
-    kangroo_y-=speed;
+    if(kangroo_y > 200) {
+      kangroo_y-=speed;
+    }
     kangroo_x+=speed;
   } else if(keys["up"] && keys["left"]){
-    kangroo_y-=speed;
+    if(kangroo_y > 200) {
+      kangroo_y-=speed;
+    }
     kangroo_x-=speed;
   }
   if(kangroo_y < 400 && !isJumping){
@@ -167,8 +223,6 @@ function update(){
 }
 
 window.requestAnimationFrame(update);
-
-
 
 </script>
 
