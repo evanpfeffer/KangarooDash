@@ -63,7 +63,7 @@ var keys = {
 
 
 canvas.focus();
-canvas.addEventListener("keydown", movePlayer);
+setTimeout(canvas.addEventListener("keydown", movePlayer), 3000);
 
 
 function move_rock(){
@@ -222,7 +222,7 @@ function update(){
   }
 }
 
-window.requestAnimationFrame(setTimeout(update, 3000));
+window.requestAnimationFrame(update);
 
 </script>
 
