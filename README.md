@@ -1,1 +1,1 @@
-Access via url: https://sanjacintojoe.github.io/KangarooDash/index.html
+Access via url: https://sanjacintojoe.github.io/KangarooDash/
